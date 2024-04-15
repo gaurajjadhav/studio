@@ -1,0 +1,2985 @@
+By: Shivarkar S.Y. Page 1
+//Slip –database program
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout 
+xmlns:android="http://schemas.android.com/apk/res/android"
+ xmlns:app="http://schemas.android.com/apk/res-auto"
+ xmlns:tools="http://schemas.android.com/tools"
+ android:layout_width="match_parent"
+ android:layout_height="match_parent"
+ tools:context=".MainActivity">
+ <TextView
+ android:layout_width="wrap_content"
+ android:layout_height="wrap_content"
+ 
+android:textAppearance="?android:attr/textAppearanceLarge"
+ android:text="Name"
+ android:id="@+id/textView"
+ android:layout_alignParentTop="true"
+ android:layout_alignParentLeft="true"
+ android:layout_alignParentStart="true" />
+ <TextView
+ android:layout_width="wrap_content"
+ android:layout_height="wrap_content"
+ 
+android:textAppearance="?android:attr/textAppearanceLarge"
+ android:text="Surname"
+ android:id="@+id/textView2"
+ android:layout_below="@+id/editText_name"
+ android:layout_alignParentLeft="true"
+ android:layout_alignParentStart="true" />
+ <TextView
+ android:layout_width="wrap_content"
+ android:layout_height="wrap_content"
+ 
+android:textAppearance="?android:attr/textAppearanceLarge"
+ android:text="Marks"
+ android:id="@+id/textView3"
+ android:layout_below="@+id/editText_surname"
+ android:layout_alignParentLeft="true"
+ android:layout_alignParentStart="true" />
+ <EditText
+ android:layout_width="match_parent"
+ android:layout_height="wrap_content"
+By: Shivarkar S.Y. Page 2
+ android:id="@+id/editText_name"
+ android:layout_alignTop="@+id/textView"
+ android:layout_toRightOf="@+id/textView"
+ android:layout_toEndOf="@+id/textView" />
+ <EditText
+ android:layout_width="match_parent"
+ android:layout_height="wrap_content"
+ android:id="@+id/editText_surname"
+ android:layout_alignTop="@+id/textView2"
+ android:layout_toRightOf="@+id/textView2"
+ android:layout_toEndOf="@+id/textView2" />
+ <EditText
+ android:layout_width="match_parent"
+ android:layout_height="wrap_content"
+ android:id="@+id/editText_Marks"
+ android:layout_below="@+id/editText_surname"
+ android:layout_toRightOf="@+id/textView3"
+ android:layout_toEndOf="@+id/textView3" />
+ <Button
+ android:layout_width="wrap_content"
+ android:layout_height="wrap_content"
+ android:text="Add Data"
+ android:id="@+id/button_add"
+ android:layout_below="@+id/editText_Marks"
+ android:layout_alignParentLeft="true"
+ android:layout_alignParentStart="true"
+ android:layout_marginTop="76dp" />
+ <Button
+ android:layout_width="wrap_content"
+ android:layout_height="wrap_content"
+ android:text="View All"
+ android:id="@+id/button_viewAll"
+ android:layout_above="@+id/button_update"
+ android:layout_centerHorizontal="true" />
+ <Button
+ android:layout_width="wrap_content"
+ android:layout_height="wrap_content"
+ android:text="Update"
+ android:id="@+id/button_update"
+ android:layout_below="@+id/button_add"
+ android:layout_alignParentLeft="true"
+ android:layout_alignParentStart="true" />
+By: Shivarkar S.Y. Page 3
+ <Button
+ android:layout_width="wrap_content"
+ android:layout_height="wrap_content"
+ android:text="Delete"
+ android:id="@+id/button_delete"
+ android:layout_centerVertical="true"
+ android:layout_below="@+id/button_viewAll"
+ android:layout_alignLeft="@+id/button_viewAll"
+ android:layout_alignStart="@+id/button_viewAll" />
+ <TextView
+ android:layout_width="wrap_content"
+ android:layout_height="wrap_content"
+ 
+android:textAppearance="?android:attr/textAppearanceLarge"
+ android:text="id"
+ android:id="@+id/textView_id"
+ android:layout_below="@+id/editText_Marks"
+ android:layout_alignParentLeft="true"
+ android:layout_alignParentStart="true" />
+ <EditText
+ android:layout_width="match_parent"
+ android:layout_height="wrap_content"
+ android:id="@+id/editText_id"
+ android:layout_alignTop="@+id/textView_id"
+ android:layout_toRightOf="@+id/textView3"
+ android:layout_toEndOf="@+id/textView3" />
+</RelativeLayout>
+///DatabaseHelper.java
+package com.example.sqlite26;
+import android.database.sqlite.SQLiteDatabase;
+import android.database.sqlite.SQLiteOpenHelper;
+By: Shivarkar S.Y. Page 4
+import android.content.ContentValues;
+import android.content.Context;
+import android.database.Cursor;
+public class DatabaseHelper extends SQLiteOpenHelper {
+ public static final String DATABASE_NAME = "Student.db";
+ public static final String TABLE_NAME = "student_table";
+ public static final String COL_1 = "ID";
+ public static final String COL_2 = "NAME";
+ public static final String COL_3 = "SURNAME";
+ public static final String COL_4 = "MARKS";
+ public DatabaseHelper(Context context)
+ {
+ super(context, DATABASE_NAME, null, 1);
+ }
+ @Override
+ public void onCreate(SQLiteDatabase db) {
+ db.execSQL("create table " + TABLE_NAME +" (ID INTEGER 
+PRIMARY KEY AUTOINCREMENT,NAME TEXT,SURNAME TEXT,MARKS 
+INTEGER)");
+ }
+ @Override
+ public void onUpgrade(SQLiteDatabase db, int oldVersion, int 
+newVersion) {
+ db.execSQL("DROP TABLE IF EXISTS "+TABLE_NAME);
+ onCreate(db);
+ }
+ public boolean insertData(String name,String surname,String 
+marks) {
+ SQLiteDatabase db = this.getWritableDatabase();
+ ContentValues contentValues = new ContentValues();
+ contentValues.put(COL_2,name);
+ contentValues.put(COL_3,surname);
+ contentValues.put(COL_4,marks);
+ long result = db.insert(TABLE_NAME,null ,contentValues);
+ if(result == -1)
+ return false;
+ else
+ return true;
+ }
+By: Shivarkar S.Y. Page 5
+ public Cursor getAllData() {
+ SQLiteDatabase db = this.getWritableDatabase();
+ Cursor res = db.rawQuery("select * from 
+"+TABLE_NAME,null);
+ return res;
+ }
+ public boolean updateData(String id,String name,String 
+surname,String marks) {
+ SQLiteDatabase db = this.getWritableDatabase();
+ ContentValues contentValues = new ContentValues();
+ contentValues.put(COL_1,id);
+ contentValues.put(COL_2,name);
+ contentValues.put(COL_3,surname);
+ contentValues.put(COL_4,marks);
+ db.update(TABLE_NAME, contentValues, "ID = ?",new 
+String[] { id });
+ return true;
+ }
+ public Integer deleteData (String id) {
+ SQLiteDatabase db = this.getWritableDatabase();
+ return db.delete(TABLE_NAME, "ID = ?",new String[] 
+{id});
+ }
+}
+////MainActivity.java
+package com.example.sqlite26;
+import androidx.appcompat.app.AppCompatActivity;
+import android.app.AlertDialog;
+import android.database.Cursor;
+import android.os.Bundle;
+import android.view.Menu;
+import android.view.MenuItem;
+import android.view.View;
+import android.widget.Button;
+By: Shivarkar S.Y. Page 6
+import android.widget.EditText;
+import android.widget.Toast;
+public class MainActivity extends AppCompatActivity {
+ DatabaseHelper myDb;
+ EditText editName,editSurname,editMarks ,editTextId;
+ Button btnAddData;
+ Button btnviewAll;
+ Button btnDelete;
+ Button btnviewUpdate;
+ @Override
+ protected void onCreate(Bundle savedInstanceState) {
+ super.onCreate(savedInstanceState);
+ setContentView(R.layout.activity_main);
+ myDb = new DatabaseHelper(this);
+ editName = (EditText)findViewById(R.id.editText_name);
+ editSurname = 
+(EditText)findViewById(R.id.editText_surname);
+ editMarks = (EditText)findViewById(R.id.editText_Marks);
+ editTextId = (EditText)findViewById(R.id.editText_id);
+ btnAddData = (Button)findViewById(R.id.button_add);
+ btnviewAll = (Button)findViewById(R.id.button_viewAll);
+ btnviewUpdate= (Button)findViewById(R.id.button_update);
+ btnDelete= (Button)findViewById(R.id.button_delete);
+ AddData();
+ viewAll();
+ UpdateData();
+ DeleteData();
+ }
+ public void DeleteData() {
+ btnDelete.setOnClickListener(
+ new View.OnClickListener() {
+ @Override
+public void onClick(View v) {
+ Integer deletedRows = 
+myDb.deleteData(editTextId.getText().toString());
+ if(deletedRows > 0)
+ 
+Toast.makeText(MainActivity.this,"Data 
+Deleted",Toast.LENGTH_LONG).show();
+ else
+ 
+Toast.makeText(MainActivity.this,"Data not 
+Deleted",Toast.LENGTH_LONG).show();
+By: Shivarkar S.Y. Page 7
+ }
+ }
+ );
+ }
+ public void UpdateData() {
+ btnviewUpdate.setOnClickListener(
+ new View.OnClickListener() {
+ @Override
+public void onClick(View v) {
+ boolean isUpdate = 
+myDb.updateData(editTextId.getText().toString(),
+ editName.getText().toString(),
+editSurname.getText().toString(),editMarks.getText().toString())
+;
+ if(isUpdate == true)
+ 
+Toast.makeText(MainActivity.this,"Data 
+Update",Toast.LENGTH_LONG).show();
+ else
+ 
+Toast.makeText(MainActivity.this,"Data not 
+Updated",Toast.LENGTH_LONG).show();
+ }
+ }
+ );
+ }
+ public void AddData() {
+ btnAddData.setOnClickListener(
+ new View.OnClickListener() {
+ @Override
+public void onClick(View v) {
+ boolean isInserted = 
+myDb.insertData(editName.getText().toString(),
+ 
+editSurname.getText().toString(),
+editMarks.getText().toString() 
+);
+ if(isInserted == true)
+ 
+Toast.makeText(MainActivity.this,"Data 
+Inserted",Toast.LENGTH_LONG).show();
+ else
+ 
+Toast.makeText(MainActivity.this,"Data not 
+Inserted",Toast.LENGTH_LONG).show();
+ }
+By: Shivarkar S.Y. Page 8
+ }
+ );
+ }
+ public void viewAll() {
+ btnviewAll.setOnClickListener(
+ new View.OnClickListener() {
+ @Override
+public void onClick(View v) {
+ Cursor res = myDb.getAllData();
+if(res.getCount() == 0) {
+ // show message
+ showMessage("Error","Nothing found");
+ return;
+ }
+ StringBuffer buffer = new StringBuffer();
+ while (res.moveToNext()) {
+ buffer.append("Id :"+ res.getString(0)+"\n");
+ buffer.append("Name :"+ res.getString(1)+"\n");
+ buffer.append("Surname :"+ res.getString(2)+"\n");
+ buffer.append("Marks :"+ res.getString(3)+"\n\n");
+ }
+ // Show all data
+showMessage("Data",buffer.toString());
+ }
+ }
+ );
+ }
+ public void showMessage(String title,String Message){
+ AlertDialog.Builder builder = new 
+AlertDialog.Builder(this);
+ builder.setCancelable(true);
+ builder.setTitle(title);
+ builder.setMessage(Message);
+ builder.show();
+ }
+ }
+ 
+By: Shivarkar S.Y. Page 9
+------------------------------------------------------------------------------------------------------------
+Slip1_2 /slip16_2
+TimeDemo(TimePicker DatePicker)
+//MainActivity.java
+package com.example.timedemo;
+import androidx.appcompat.app.AppCompatActivity;
+import android.os.Bundle;
+import android.view.View;
+import android.widget.DatePicker;
+import android.widget.TimePicker;
+import android.widget.Toast;
+public class MainActivity extends AppCompatActivity {
+ TimePicker tp;
+ DatePicker dp;
+By: Shivarkar S.Y. Page 10
+ @Override
+ protected void onCreate(Bundle savedInstanceState) {
+ super.onCreate(savedInstanceState);
+ setContentView(R.layout.activity_main);
+ tp=(TimePicker)findViewById(R.id.timePicker);
+ // tp.setIs24HourView(true);
+ dp=(DatePicker)findViewById(R.id.datePicker);
+ }
+ public void onClick(View view) {
+ Toast.makeText(getBaseContext(),
+ "Time Selected"+tp.getHour()+":"+tp.getMinute(),
+ Toast.LENGTH_SHORT).show();
+ }
+ public void showDate(View view) {
+ Toast.makeText(getBaseContext(),
+ "date selected"+(dp.getMonth()+1)+
+ "/"+dp.getDayOfMonth()+
+ "/"+dp.getYear(),
+ Toast.LENGTH_SHORT).show();
+ }
+}
+//activity_main.xml
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout 
+xmlns:android="http://schemas.android.com/apk/res/android"
+ xmlns:app="http://schemas.android.com/apk/res-auto"
+ xmlns:tools="http://schemas.android.com/tools"
+ android:layout_width="match_parent"
+ android:layout_height="match_parent"
+ android:orientation="vertical"
+ tools:context=".MainActivity">
+ <TimePicker
+ android:id="@+id/timePicker"
+ android:layout_width="wrap_content"
+ android:layout_height="238dp" />
+By: Shivarkar S.Y. Page 11
+ <Button
+ android:id="@+id/btnSet"
+ android:layout_width="70dp"
+ android:layout_height="31dp"
+ android:onClick="onClick"
+ tools:layout_editor_absoluteX="174dp"
+ tools:layout_editor_absoluteY="193dp" />
+ <DatePicker
+ android:id="@+id/datePicker"
+ android:layout_width="wrap_content"
+ android:layout_height="238dp" />
+ <Button
+ android:id="@+id/btndt"
+ android:layout_width="70dp"
+ android:layout_height="31dp"
+ android:onClick="showDate"
+ tools:layout_editor_absoluteX="174dp"
+ tools:layout_editor_absoluteY="193dp" />
+</LinearLayout>
+Slip19_1/slip10_1
+By: Shivarkar S.Y. Page 12
+BasicViews(Toggle Button)
+//MainActivity.java
+package com.example.basicviews;
+import androidx.appcompat.app.AppCompatActivity;
+import android.os.Bundle;
+import android.view.View;
+import android.widget.Button;
+import android.widget.CheckBox;
+import android.widget.RadioButton;
+import android.widget.RadioGroup;
+import android.widget.Toast;
+import android.widget.ToggleButton;
+public class MainActivity extends AppCompatActivity {
+ @Override
+ protected void onCreate(Bundle savedInstanceState) {
+ super.onCreate(savedInstanceState);
+ setContentView(R.layout.activity_main);
+ Button btsave=(Button)findViewById(R.id.button1);
+ btsave.setOnClickListener(new View.OnClickListener() {
+ @Override
+ public void onClick(View v) {
+ Toast.makeText(getBaseContext(),"you clicked 
+save button",Toast.LENGTH_SHORT).show();
+ }
+ });
+ Button btopen=(Button)findViewById(R.id.button2);
+ btopen.setOnClickListener(new View.OnClickListener() {
+ @Override
+ public void onClick(View v) {
+ Toast.makeText(getBaseContext(),"you clicked 
+open button",Toast.LENGTH_SHORT).show();
+ }
+ });
+ final CheckBox 
+chk=(CheckBox)findViewById(R.id.checkBox);
+ chk.setOnClickListener(new View.OnClickListener() {
+ @Override
+ public void onClick(View v) {
+ if (((CheckBox)v).isChecked())
+By: Shivarkar S.Y. Page 13
+ Toast.makeText(getBaseContext(),"you checked 
+check box1 button",Toast.LENGTH_SHORT).show();
+ else
+ Toast.makeText(getBaseContext(),"you 
+unchecked check box1 button",Toast.LENGTH_SHORT).show();
+ }
+ });
+ RadioGroup rgb=(RadioGroup)findViewById(R.id.rdgrp1);
+ rgb.setOnCheckedChangeListener(new 
+RadioGroup.OnCheckedChangeListener() {
+ @Override
+ public void onCheckedChanged(RadioGroup group, int 
+checkedId) {
+ RadioButton rb1= 
+(RadioButton)findViewById(R.id.rd1);
+ if (rb1.isChecked())
+ {
+ Toast.makeText(getBaseContext(),"you checked 
+option1",Toast.LENGTH_SHORT).show();
+ }
+ else
+ {
+ Toast.makeText(getBaseContext(),"you checked 
+option2",Toast.LENGTH_SHORT).show();
+ }
+ }
+ });
+ ToggleButton 
+tb=(ToggleButton)findViewById(R.id.toggle1);
+ tb.setOnClickListener(new View.OnClickListener() {
+ @Override
+ public void onClick(View v) {
+ if(((ToggleButton)v).isChecked())
+ {Toast.makeText(getBaseContext(),"toggle button 
+is on",Toast.LENGTH_SHORT).show();}
+ else
+ {Toast.makeText(getBaseContext(),"toggle button 
+is off",Toast.LENGTH_SHORT).show();} }
+ });
+ }
+}
+By: Shivarkar S.Y. Page 14
+//activity_main.xml
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout 
+xmlns:android="http://schemas.android.com/apk/res/android"
+ xmlns:app="http://schemas.android.com/apk/res-auto"
+ xmlns:tools="http://schemas.android.com/tools"
+ android:layout_width="fill_parent"
+ android:layout_height="fill_parent"
+ android:orientation="vertical"
+ tools:context=".MainActivity">
+ <Button
+ android:id="@+id/button1"
+ android:layout_width="fill_parent"
+ android:layout_height="wrap_content"
+ android:text="save" />
+ <Button
+ android:id="@+id/button2"
+ android:layout_width="fill_parent"
+ android:layout_height="wrap_content"
+ android:text="open" />
+ <ImageButton
+ android:id="@+id/btnimg"
+ android:layout_width="fill_parent"
+ android:layout_height="wrap_content"
+ android:src="@mipmap/pic3" />
+ <TextView
+ android:id="@+id/text1"
+ android:layout_width="fill_parent"
+ android:layout_height="wrap_content"/>
+ <EditText
+ android:id="@+id/editText"
+ android:layout_width="wrap_content"
+ android:layout_height="wrap_content"
+ android:text="Name" />
+ <CheckBox
+ android:id="@+id/checkBox"
+ android:layout_width="fill_parent"
+By: Shivarkar S.Y. Page 15
+ android:layout_height="wrap_content"
+ android:text="CheckBox" />
+ <CheckBox
+ android:id="@+id/checkBox2" 
+style="?android:attr/starStyle"
+ android:layout_width="wrap_content"
+ android:layout_height="wrap_content"
+ android:text="CheckBox" />
+ <RadioGroup
+ android:id="@+id/rdgrp1"
+ android:layout_width="fill_parent"
+ android:layout_height="wrap_content"
+ android:orientation="vertical" >
+ <RadioButton
+ android:id="@+id/rd1"
+ android:layout_width="fill_parent"
+ android:layout_height="wrap_content"
+ android:text="option1"/>
+ <RadioButton
+ android:id="@+id/rd2"
+ android:layout_width="fill_parent"
+ android:layout_height="wrap_content"
+ android:text="option2"/>
+ </RadioGroup>
+ <ToggleButton
+ android:id="@+id/toggle1"
+ android:layout_width="wrap_content"
+ android:layout_height="wrap_content" />
+</LinearLayout>
+By: Shivarkar S.Y. Page 16
+Slip1_1
+Program to show lifecycle of activity
+MainActivity.java
+package com.example.tybca;
+import androidx.appcompat.app.AppCompatActivity;
+import android.os.Bundle;
+import android.util.Log;
+import android.os.Bundle;
+import android.widget.Toast;
+public class MainActivity extends AppCompatActivity {
+String tag="Events";
+ @Override
+ protected void onCreate(Bundle savedInstanceState) {
+ super.onCreate(savedInstanceState);
+ setContentView(R.layout.activity_main);
+By: Shivarkar S.Y. Page 17
+ Log.d(tag,"in on create event");
+ //Displaying Toast with Hello Javatpoint message
+ Toast.makeText(getApplicationContext(),"Hello TYBCA 
+Student",Toast.LENGTH_SHORT).show();
+ }
+ @Override
+ public void onStart() {
+ super.onStart();
+ Log.d(tag,"in on start event");
+ }
+ @Override
+ public void onStop() {
+ super.onStop();
+ Log.d(tag,"in on stop event");
+ }
+ @Override
+ protected void onResume() {
+ super.onResume();
+ Log.d(tag,"in on resume event");
+ }
+ @Override
+ public void onPause() {
+ super.onPause();
+ Log.d(tag,"in on pause event");
+ }
+ @Override
+ protected void onDestroy() {
+ super.onDestroy();
+ Log.d(tag,"in on Destroy event");
+ }
+}
+By: Shivarkar S.Y. Page 18
+Slip2_2 
+package com.example.maptest;
+import androidx.fragment.app.FragmentActivity;
+import android.os.Bundle;
+import com.google.android.gms.maps.CameraUpdateFactory;
+import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.OnMapReadyCallback;
+import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.MarkerOptions;
+public class MapsActivity extends FragmentActivity implements 
+OnMapReadyCallback {
+ private GoogleMap mMap;
+ @Override
+ protected void onCreate(Bundle savedInstanceState) {
+By: Shivarkar S.Y. Page 19
+ super.onCreate(savedInstanceState);
+ setContentView(R.layout.activity_maps);
+ // Obtain the SupportMapFragment and get notified when 
+the map is ready to be used.
+ SupportMapFragment mapFragment = (SupportMapFragment) 
+getSupportFragmentManager()
+ .findFragmentById(R.id.map);
+ mapFragment.getMapAsync(this);
+ }
+ /**
+ * Manipulates the map once available.
+ * This callback is triggered when the map is ready to be 
+used.
+ * This is where we can add markers or lines, add listeners 
+or move the camera. In this case,
+ * we just add a marker near Sydney, Australia.
+ * If Google Play services is not installed on the device, 
+the user will be prompted to install
+ * it inside the SupportMapFragment. This method will only 
+be triggered once the user has
+ * installed Google Play services and returned to the app.
+ */
+ @Override
+ public void onMapReady(GoogleMap googleMap) {
+ mMap = googleMap;
+ // Add a marker in Sydney and move the camera
+ LatLng sydney = new LatLng(-34, 151);
+ mMap.addMarker(new 
+MarkerOptions().position(sydney).title("Marker in Sydney"));
+ mMap.moveCamera(CameraUpdateFactory.newLatLng(sydney));
+ }
+}
+slip5_2
+//Google Map Zoom in ,Zoom-out Program
+//MapsActivity.java
+By: Shivarkar S.Y. Page 20
+package com.example.mygps;
+import androidx.fragment.app.FragmentActivity;
+import android.os.Bundle;
+import android.view.KeyEvent;
+import com.google.android.gms.maps.CameraUpdateFactory;
+import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.OnMapReadyCallback;
+import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.MarkerOptions;
+public class MapsActivity<onMapReady> extends 
+FragmentActivity implements OnMapReadyCallback {
+ private GoogleMap mMap;
+ @Override
+ protected void onCreate(Bundle savedInstanceState) 
+{
+ super.onCreate(savedInstanceState);
+ setContentView(R.layout.activity_maps);
+ // Obtain the SupportMapFragment and get 
+notified when the map is ready to be used.
+ SupportMapFragment mapFragment = 
+(SupportMapFragment) getSupportFragmentManager()
+ .findFragmentById(R.id.map);
+ mapFragment.getMapAsync(this);
+ }
+ /**
+ * Manipulates the map once available.
+ * This callback is triggered when the map is ready 
+to be used.
+ * This is where we can add markers or lines, add 
+By: Shivarkar S.Y. Page 21
+listeners or move the camera. In this case,
+ * we just add a marker near Sydney, Australia.
+ * If Google Play services is not installed on the 
+device, the user will be prompted to install
+ * it inside the SupportMapFragment. This method 
+will only be triggered once the user has
+ * installed Google Play services and returned to 
+the app.
+ */
+ @Override
+ public void onMapReady(GoogleMap googleMap) {
+ mMap = googleMap;
+ // Add a marker in Sydney and move the camera
+ LatLng sydney = new LatLng(21, 78);
+ mMap.addMarker(new 
+MarkerOptions().position(sydney).title("Marker in 
+Sydney"));
+ 
+mMap.moveCamera(CameraUpdateFactory.newLatLng(sydney));
+ }
+ @Override
+ public boolean onKeyDown(int keyCode, KeyEvent 
+event) {
+ switch (keyCode)
+ { case 
+KeyEvent.KEYCODE_3:mMap.animateCamera(CameraUpdateFacto
+ry.zoomIn());
+ break;
+ case KeyEvent.KEYCODE_1 
+:mMap.animateCamera(CameraUpdateFactory.zoomOut());
+ break;}
+ return super.onKeyDown(keyCode, event);
+ }
+}
+By: Shivarkar S.Y. Page 22
+slip3_2 / slip15_2
+//ActivityMain.java
+package com.example.slip3_2;
+import androidx.appcompat.app.AppCompatActivity;
+import android.content.Intent;
+import android.os.Bundle;
+import android.view.View;
+import android.widget.Button;
+import android.widget.EditText;
+public class MainActivity extends AppCompatActivity {
+ @Override
+ protected void onCreate(Bundle savedInstanceState) {
+By: Shivarkar S.Y. Page 23
+ super.onCreate(savedInstanceState);
+ setContentView(R.layout.activity_main);
+ final EditText editText = findViewById(R.id.name);
+ final EditText text2=findViewById(R.id.sname);
+ final EditText text3=findViewById(R.id.marks);
+ 
+ Button button = findViewById(R.id.button);
+ button.setOnClickListener(new View.OnClickListener() {
+ @Override
+ public void onClick(View v) {
+ String name = 
+editText.getText().toString().trim();
+ String sname=text2.getText().toString().trim();
+ String marks = 
+text3.getText().toString().trim();
+ Bundle bundle = new Bundle();
+ bundle.putString("value1",name);
+ bundle.putString("value2",sname);
+ bundle.putString("value3",marks);
+ Intent intent = new Intent(MainActivity.this, 
+SecondActivirt.class);
+ intent.putExtras(bundle);
+ startActivity(intent);
+ }
+ });
+ }
+}
+//main_activity.xml
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout 
+xmlns:android="http://schemas.android.com/apk/res/android"
+ xmlns:app="http://schemas.android.com/apk/res-auto"
+ xmlns:tools="http://schemas.android.com/tools"
+ android:layout_width="match_parent"
+ android:layout_height="match_parent"
+ android:orientation="vertical"
+By: Shivarkar S.Y. Page 24
+ tools:context=".MainActivity">
+ <EditText
+ android:id = "@+id/name"
+ android:layout_width = "match_parent"
+ android:layout_height = "wrap_content"
+ android:layout_gravity = "center"
+ android:hint = "Enter name"
+ android:inputType = "text" />
+ <EditText
+ android:id = "@+id/sname"
+ android:layout_width = "match_parent"
+ android:layout_height = "wrap_content"
+ android:layout_gravity = "center"
+ android:hint = "Enter surname"
+ android:inputType = "text" />
+ <EditText
+ android:id = "@+id/marks"
+ android:layout_width = "match_parent"
+ android:layout_height = "wrap_content"
+ android:layout_gravity = "center"
+ android:hint = "Enter marks"
+ android:inputType = "text" />
+ <Button
+ android:id = "@+id/button"
+ android:layout_width = "wrap_content"
+ android:layout_height = "wrap_content"
+ android:layout_gravity = "center"
+ android:layout_marginTop = "16dp"
+ android:text = "Next" />
+</LinearLayout>
+//SecondActivity.java
+package com.example.slip3_2;
+import android.content.Intent;
+import android.os.Bundle;
+import android.widget.TextView;
+import androidx.appcompat.app.AppCompatActivity;
+public class SecondActivirt extends AppCompatActivity {
+ @Override
+ protected void onCreate(Bundle savedInstanceState) {
+By: Shivarkar S.Y. Page 25
+ super.onCreate(savedInstanceState);
+ setContentView(R.layout.activity_second);
+ Bundle bundle = getIntent().getExtras();
+ if (bundle!= null) {
+ String value = bundle.getString("value1");
+ String value2 = bundle.getString("value2");
+ String value3 = bundle.getString("value3");
+ TextView textView = findViewById(R.id.text_view);
+ TextView textView2 = findViewById(R.id.textryr);
+ TextView textView3 = 
+findViewById(R.id.textcollection);
+ textView.setText(value);
+ textView2.setText(value2);
+ textView3.setText(value3);
+ }
+ }
+}
+//activity_second.xml
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout 
+xmlns:android="http://schemas.android.com/apk/res/android"
+ android:orientation="vertical" 
+android:layout_width="match_parent"
+ android:layout_height="match_parent">
+ <TextView
+ android:id = "@+id/text_view"
+ android:layout_width = "match_parent"
+ android:layout_height = "wrap_content"
+ android:layout_gravity = "center" />
+ <TextView
+ android:id = "@+id/textryr"
+ android:layout_width = "match_parent"
+ android:layout_height = "wrap_content"
+ android:layout_gravity = "center" />
+ <TextView
+ android:id = "@+id/textcollection"
+ android:layout_width = "match_parent"
+ android:layout_height = "wrap_content"
+ android:layout_gravity = "center" />
+</LinearLayout>
+By: Shivarkar S.Y. Page 26
+//slip13_1 (Scroll view)
+//Activity_Main.java
+package com.example.slip22_1;
+import androidx.appcompat.app.AppCompatActivity;
+import android.os.Bundle;
+public class MainActivity extends AppCompatActivity {
+ @Override
+ protected void onCreate(Bundle savedInstanceState) {
+ super.onCreate(savedInstanceState);
+ setContentView(R.layout.activity_main);
+ }
+}
+//activity_main.xml
+By: Shivarkar S.Y. Page 27
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout 
+xmlns:android="http://schemas.android.com/apk/res/android"
+ xmlns:app="http://schemas.android.com/apk/res-auto"
+ xmlns:tools="http://schemas.android.com/tools"
+ android:layout_width="match_parent"
+ android:layout_height="match_parent"
+ tools:context=".MainActivity">
+ <ScrollView
+ android:layout_width="match_parent"
+ android:layout_height="match_parent">
+ <LinearLayout
+ android:layout_width="match_parent"
+ android:layout_height="wrap_content"
+ android:orientation="vertical">
+ <Button
+ android:layout_width="wrap_content"
+ android:layout_height="wrap_content"
+ android:layout_gravity="center"
+ android:text="Button 1" />
+ <Button
+ android:layout_width="wrap_content"
+ android:layout_height="wrap_content"
+ android:layout_gravity="center"
+ android:text="Button 2" />
+ <Button
+ android:layout_width="wrap_content"
+ android:layout_height="wrap_content"
+ android:layout_gravity="center"
+ android:text="Button 3" />
+ <Button
+ android:layout_width="wrap_content"
+ android:layout_height="wrap_content"
+ android:layout_gravity="center"
+ android:text="Button 4" />
+ <Button
+ android:layout_width="wrap_content"
+ android:layout_height="wrap_content"
+ android:layout_gravity="center"
+ android:text="Button 5" />
+ <Button
+ android:layout_width="wrap_content"
+ android:layout_height="wrap_content"
+ android:layout_gravity="center"
+By: Shivarkar S.Y. Page 28
+ android:text="Button 6" />
+ <Button
+ android:layout_width="wrap_content"
+ android:layout_height="wrap_content"
+ android:layout_gravity="center"
+ android:text="Button 7" />
+ <Button
+ android:layout_width="wrap_content"
+ android:layout_height="wrap_content"
+ android:layout_gravity="center"
+ android:text="Button 10" />
+ <Button
+ android:layout_width="wrap_content"
+ android:layout_height="wrap_content"
+ android:layout_gravity="center"
+ android:text="Button 8" />
+ <Button
+ android:layout_width="wrap_content"
+ android:layout_height="wrap_content"
+ android:layout_gravity="center"
+ android:text="Button 9" />
+ <Button
+ android:layout_width="wrap_content"
+ android:layout_height="wrap_content"
+ android:layout_gravity="center"
+ android:text="Button 11" />
+ <Button
+ android:layout_width="wrap_content"
+ android:layout_height="wrap_content"
+ android:layout_gravity="center"
+ android:text="Button 12" />
+ <Button
+ android:layout_width="wrap_content"
+ android:layout_height="wrap_content"
+ android:layout_gravity="center"
+ android:text="Button 13" />
+ <Button
+ android:layout_width="wrap_content"
+ android:layout_height="wrap_content"
+ android:layout_gravity="center"
+ android:text="Button 14" />
+ <Button
+ android:layout_width="wrap_content"
+ android:layout_height="wrap_content"
+By: Shivarkar S.Y. Page 29
+ android:layout_gravity="center"
+ android:text="Button 15" />
+ <Button
+ android:layout_width="fill_parent"
+ android:layout_height="wrap_content"
+ android:text="Button 16" />
+ <Button
+ android:layout_width="wrap_content"
+ android:layout_height="wrap_content"
+ android:layout_gravity="center"
+ android:text="Button 17" />
+ <Button
+ android:layout_width="wrap_content"
+ android:layout_height="wrap_content"
+ android:layout_gravity="center"
+ android:text="Button 18" />
+ <Button
+ android:layout_width="wrap_content"
+ android:layout_height="wrap_content"
+ android:layout_gravity="center"
+ android:text="Button 19" />
+ <Button
+ android:layout_width="wrap_content"
+ android:layout_height="wrap_content"
+ android:layout_gravity="center"
+ android:text="Button 20" />
+ </LinearLayout>
+ </ScrollView>
+</androidx.constraintlayout.widget.ConstraintLayout>
+By: Shivarkar S.Y. Page 30
+Slip16_2 // simple calculator
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout 
+xmlns:android="http://schemas.android.com/apk/res/android"
+ xmlns:app="http://schemas.android.com/apk/res-auto"
+ xmlns:tools="http://schemas.android.com/tools"
+ android:layout_width="match_parent"
+ android:layout_height="match_parent"
+ tools:context=".MainActivity">
+ <EditText
+ android:layout_width="match_parent"
+ android:layout_height="wrap_content"
+ android:id="@+id/edt1"/>
+ <Button
+ style="?android:attr/buttonStyleSmall"
+ android:layout_width="wrap_content"
+ android:layout_height="wrap_content"
+ android:text="1"
+By: Shivarkar S.Y. Page 31
+ android:id="@+id/button1"
+ android:layout_marginTop="94dp"
+ android:layout_below="@+id/edt1"
+ android:layout_toStartOf="@+id/button4"
+ android:layout_alignRight="@+id/button4"
+ android:layout_alignEnd="@+id/button4" />
+ <Button
+ style="?android:attr/buttonStyleSmall"
+ android:layout_width="wrap_content"
+ android:layout_height="wrap_content"
+ android:text="2"
+ android:id="@+id/button2"
+ android:layout_alignTop="@+id/button1"
+ android:layout_toLeftOf="@+id/button3"
+ android:layout_toStartOf="@+id/button3" />
+ <Button
+ style="?android:attr/buttonStyleSmall"
+ android:layout_width="wrap_content"
+ android:layout_height="wrap_content"
+ android:text="3"
+ android:id="@+id/button3"
+ android:layout_alignTop="@+id/button2"
+ android:layout_centerHorizontal="true" />
+ <Button
+ style="?android:attr/buttonStyleSmall"
+ android:layout_width="wrap_content"
+ android:layout_height="wrap_content"
+ android:text="4"
+ android:id="@+id/button4"
+ android:layout_below="@+id/button1"
+ android:layout_toLeftOf="@+id/button2" />
+ <Button
+ style="?android:attr/buttonStyleSmall"
+ android:layout_width="wrap_content"
+ android:layout_height="wrap_content"
+ android:text="5"
+ android:id="@+id/button5"
+ android:layout_alignBottom="@+id/button4"
+ android:layout_alignLeft="@+id/button2"
+ android:layout_alignStart="@+id/button2" />
+ <Button
+ style="?android:attr/buttonStyleSmall"
+By: Shivarkar S.Y. Page 32
+ android:layout_width="wrap_content"
+ android:layout_height="wrap_content"
+ android:text="6"
+ android:id="@+id/button6"
+ android:layout_below="@+id/button3"
+ android:layout_alignLeft="@+id/button3"
+ android:layout_alignStart="@+id/button3" />
+ <Button
+ style="?android:attr/buttonStyleSmall"
+ android:layout_width="wrap_content"
+ android:layout_height="wrap_content"
+ android:text="7"
+ android:id="@+id/button7"
+ android:layout_below="@+id/button4"
+ android:layout_toLeftOf="@+id/button2" />
+ <Button
+ style="?android:attr/buttonStyleSmall"
+ android:layout_width="wrap_content"
+ android:layout_height="wrap_content"
+ android:text="8"
+ android:id="@+id/button8"
+ android:layout_below="@+id/button5"
+ android:layout_alignLeft="@+id/button5"
+ android:layout_alignStart="@+id/button5" />
+ <Button
+ style="?android:attr/buttonStyleSmall"
+ android:layout_width="wrap_content"
+ android:layout_height="wrap_content"
+ android:text="9"
+ android:id="@+id/button9"
+ android:layout_below="@+id/button6"
+ android:layout_alignLeft="@+id/button6"
+ android:layout_alignStart="@+id/button6" />
+ <Button
+ style="?android:attr/buttonStyleSmall"
+ android:layout_width="wrap_content"
+ android:layout_height="wrap_content"
+ android:text="+"
+ android:id="@+id/buttonadd"
+ android:layout_alignTop="@+id/button3"
+ android:layout_toRightOf="@+id/button3"
+ android:layout_marginLeft="46dp"
+ android:layout_marginStart="46dp"
+By: Shivarkar S.Y. Page 33
+ android:layout_alignRight="@+id/edt1"
+ android:layout_alignEnd="@+id/edt1" />
+ <Button
+ style="?android:attr/buttonStyleSmall"
+ android:layout_width="wrap_content"
+ android:layout_height="wrap_content"
+ android:text="-"
+ android:id="@+id/buttonsub"
+ android:layout_below="@+id/buttonadd"
+ android:layout_alignLeft="@+id/buttonadd"
+ android:layout_alignStart="@+id/buttonadd"
+ android:layout_alignRight="@+id/buttonadd"
+ android:layout_alignEnd="@+id/buttonadd" />
+ <Button
+ style="?android:attr/buttonStyleSmall"
+ android:layout_width="wrap_content"
+ android:layout_height="wrap_content"
+ android:text="*"
+ android:id="@+id/buttonmul"
+ android:layout_below="@+id/buttonsub"
+ android:layout_alignLeft="@+id/buttonsub"
+ android:layout_alignStart="@+id/buttonsub"
+ android:layout_alignParentRight="true"
+ android:layout_alignParentEnd="true" />
+ <Button
+ style="?android:attr/buttonStyleSmall"
+ android:layout_width="wrap_content"
+ android:layout_height="wrap_content"
+ android:text="."
+ android:id="@+id/button10"
+ android:layout_below="@+id/button7"
+ android:layout_toLeftOf="@+id/button2" />
+ <Button
+ style="?android:attr/buttonStyleSmall"
+ android:layout_width="wrap_content"
+ android:layout_height="wrap_content"
+ android:text="0"
+ android:id="@+id/button0"
+ android:layout_below="@+id/button8"
+ android:layout_alignLeft="@+id/button8"
+ android:layout_alignStart="@+id/button8" />
+ <Button
+By: Shivarkar S.Y. Page 34
+ style="?android:attr/buttonStyleSmall"
+ android:layout_width="wrap_content"
+ android:layout_height="wrap_content"
+ android:text="C"
+ android:id="@+id/buttonC"
+ android:layout_below="@+id/button9"
+ android:layout_alignLeft="@+id/button9"
+ android:layout_alignStart="@+id/button9" />
+ <Button
+ style="?android:attr/buttonStyleSmall"
+ android:layout_width="wrap_content"
+ android:layout_height="wrap_content"
+ android:text="/"
+ android:id="@+id/buttondiv"
+ android:layout_below="@+id/buttonmul"
+ android:layout_alignLeft="@+id/buttonmul"
+ android:layout_alignStart="@+id/buttonmul"
+ android:layout_alignRight="@+id/buttonmul"
+ android:layout_alignEnd="@+id/buttonmul" />
+ <Button
+ android:layout_width="wrap_content"
+ android:layout_height="wrap_content"
+ android:text="="
+ android:id="@+id/buttoneql"
+ android:layout_below="@+id/button0"
+ android:layout_marginTop="37dp"
+ android:layout_alignRight="@+id/buttondiv"
+ android:layout_alignEnd="@+id/buttondiv"
+ android:layout_alignLeft="@+id/button10"
+ android:layout_alignStart="@+id/button10" />
+</RelativeLayout>
+//MainAcivity.java
+package com.example.slip2_2;
+import androidx.appcompat.app.AppCompatActivity;
+import android.os.Bundle;
+import android.view.View;
+import android.widget.Button;
+import android.widget.EditText;
+By: Shivarkar S.Y. Page 35
+public class MainActivity extends AppCompatActivity {
+ Button button0 , button1 , button2 , button3 , button4 , 
+button5 , button6 ,
+ button7 , button8 , button9 , buttonAdd , buttonSub 
+, buttonDivision ,
+ buttonMul , button10 , buttonC , buttonEqual ;
+ EditText edt1 ;
+ float mValueOne , mValueTwo ;
+ boolean mAddition , mSubtract ,mMultiplication ,mDivision ;
+ @Override
+ protected void onCreate(Bundle savedInstanceState) {
+ super.onCreate(savedInstanceState);
+ setContentView(R.layout.activity_main);
+ button0 = (Button) findViewById(R.id.button0);
+ button1 = (Button) findViewById(R.id.button1);
+ button2 = (Button) findViewById(R.id.button2);
+ button3 = (Button) findViewById(R.id.button3);
+ button4 = (Button) findViewById(R.id.button4);
+ button5 = (Button) findViewById(R.id.button5);
+ button6 = (Button) findViewById(R.id.button6);
+ button7 = (Button) findViewById(R.id.button7);
+ button8 = (Button) findViewById(R.id.button8);
+ button9 = (Button) findViewById(R.id.button9);
+ button10 = (Button) findViewById(R.id.button10);
+ buttonAdd = (Button) findViewById(R.id.buttonadd);
+ buttonSub = (Button) findViewById(R.id.buttonsub);
+ buttonMul = (Button) findViewById(R.id.buttonmul);
+ buttonDivision = (Button) findViewById(R.id.buttondiv);
+ buttonC = (Button) findViewById(R.id.buttonC);
+ buttonEqual = (Button) findViewById(R.id.buttoneql);
+ edt1 = (EditText) findViewById(R.id.edt1);
+ button1.setOnClickListener(new View.OnClickListener() {
+ @Override
+ public void onClick(View v) {
+ edt1.setText(edt1.getText()+"1");
+ }
+ });
+By: Shivarkar S.Y. Page 36
+ button2.setOnClickListener(new View.OnClickListener() {
+ @Override
+ public void onClick(View v) {
+ edt1.setText(edt1.getText()+"2");
+ }
+ });
+ button3.setOnClickListener(new View.OnClickListener() {
+ @Override
+ public void onClick(View v) {
+ edt1.setText(edt1.getText()+"3");
+ }
+ });
+ button4.setOnClickListener(new View.OnClickListener() {
+ @Override
+ public void onClick(View v) {
+ edt1.setText(edt1.getText()+"4");
+ }
+ });
+ button5.setOnClickListener(new View.OnClickListener() {
+ @Override
+ public void onClick(View v) {
+ edt1.setText(edt1.getText()+"5");
+ }
+ });
+ button6.setOnClickListener(new View.OnClickListener() {
+ @Override
+ public void onClick(View v) {
+ edt1.setText(edt1.getText()+"6");
+ }
+ });
+ button7.setOnClickListener(new View.OnClickListener() {
+ @Override
+ public void onClick(View v) {
+ edt1.setText(edt1.getText()+"7");
+ }
+ });
+ button8.setOnClickListener(new View.OnClickListener() {
+ @Override
+ public void onClick(View v) {
+ edt1.setText(edt1.getText()+"8");
+ }
+By: Shivarkar S.Y. Page 37
+ });
+ button9.setOnClickListener(new View.OnClickListener() {
+ @Override
+ public void onClick(View v) {
+ edt1.setText(edt1.getText()+"9");
+ }
+ });
+ button0.setOnClickListener(new View.OnClickListener() {
+ @Override
+ public void onClick(View v) {
+ edt1.setText(edt1.getText()+"0");
+ }
+ });
+ buttonAdd.setOnClickListener(new View.OnClickListener() 
+{
+ @Override
+ public void onClick(View v) {
+ if (edt1 == null){
+ edt1.setText("");
+ }else {
+ mValueOne = Float.parseFloat(edt1.getText() 
++ "");
+ mAddition = true;
+ edt1.setText(null);
+ }
+ }
+ });
+ buttonSub.setOnClickListener(new View.OnClickListener() 
+{
+ @Override
+ public void onClick(View v) {
+ mValueOne = Float.parseFloat(edt1.getText() + 
+"");
+ mSubtract = true ;
+ edt1.setText(null);
+ }
+ });
+ buttonMul.setOnClickListener(new View.OnClickListener() 
+{
+ @Override
+ public void onClick(View v) {
+By: Shivarkar S.Y. Page 38
+ mValueOne = Float.parseFloat(edt1.getText() + 
+"");
+ mMultiplication = true ;
+ edt1.setText(null);
+ }
+ });
+ buttonDivision.setOnClickListener(new 
+View.OnClickListener() {
+ @Override
+ public void onClick(View v) {
+ mValueOne = Float.parseFloat(edt1.getText()+"");
+ mDivision = true ;
+ edt1.setText(null);
+ }
+ });
+ buttonEqual.setOnClickListener(new 
+View.OnClickListener() {
+ @Override
+ public void onClick(View v) {
+ mValueTwo = Float.parseFloat(edt1.getText() + 
+"");
+ if (mAddition == true){
+ edt1.setText(mValueOne + mValueTwo +"");
+ mAddition=false;
+ }
+ if (mSubtract == true){
+ edt1.setText(mValueOne - mValueTwo+"");
+ mSubtract=false;
+ }
+ if (mMultiplication == true){
+ edt1.setText(mValueOne * mValueTwo+"");
+ mMultiplication=false;
+ }
+ if (mDivision == true){
+ edt1.setText(mValueOne / mValueTwo+"");
+ mDivision=false;
+ }
+By: Shivarkar S.Y. Page 39
+ }
+ });
+ buttonC.setOnClickListener(new View.OnClickListener() {
+ @Override
+ public void onClick(View v) {
+ edt1.setText("");
+ }
+ });
+ button10.setOnClickListener(
+ new View.OnClickListener() {
+ @Override
+ public void onClick(View v) {
+ edt1.setText(edt1.getText()+".");
+ }
+ });
+ }
+}
+Slip15_1
+By: Shivarkar S.Y. Page 40
+Create Hello_world application that will display Hello world in middle of the screen in blue color 
+with white background with border 
+//activity_main.xml
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout 
+xmlns:android="http://schemas.android.
+com/apk/res/android"
+ 
+xmlns:app="http://schemas.android.com/
+apk/res-auto"
+ 
+xmlns:tools="http://schemas.android.co
+m/tools"
+ 
+android:layout_width="match_parent"
+ 
+android:layout_height="match_parent"
+ android:background="#000000"
+ android:padding="10dp"
+ tools:context=".MainActivity">
+ <LinearLayout
+ 
+android:layout_width="match_parent"
+ 
+android:layout_height="match_parent"
+ 
+By: Shivarkar S.Y. Page 41
+android:orientation="horizontal"
+ 
+android:background="@drawable/border">
+ <TextView
+ 
+android:layout_width="fill_parent"
+ 
+android:layout_height="fill_parent"
+ 
+android:gravity="center_vertical|cente
+r_horizontal"
+ android:text="Hello World!"
+ android:background="#A00000FF"
+ android:textColor="#ffffff"
+ android:textSize="40sp" />
+ </LinearLayout>
+</RelativeLayout>
+//border.xml
+<?xml version="1.0" encoding="utf-8"?>
+<shape 
+xmlns:android="http://schemas.android.
+com/apk/res/android"
+By: Shivarkar S.Y. Page 42
+ android:shape="rectangle">
+ <stroke
+ android:width="20dp"
+ 
+android:color="#ffffff"></stroke>
+</shape>
+//Slip18_2
+//activity_main.xml
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout 
+xmlns:android="http://schemas.android.com/apk/res/android"
+ xmlns:app="http://schemas.android.com/apk/res-auto"
+ xmlns:tools="http://schemas.android.com/tools"
+ android:layout_width="match_parent"
+ android:layout_height="match_parent"
+By: Shivarkar S.Y. Page 43
+ tools:context=".MainActivity"
+ android:orientation="vertical">
+ <TextView
+ android:layout_width="wrap_content"
+ android:textStyle="bold"
+ android:textSize="30dp"
+ android:layout_height="wrap_content"
+ android:layout_gravity="center_horizontal"
+ android:id="@+id/textView1" />
+ <TextView
+ android:layout_width="wrap_content"
+ android:textStyle="bold"
+ android:textSize="30dp"
+ android:layout_height="wrap_content"
+ android:layout_gravity="center_horizontal"
+ android:id="@+id/textView2" />
+ <EditText
+ android:layout_width="match_parent"
+ android:layout_height="wrap_content"
+ android:hint="First no"
+ android:id="@+id/editText1"
+ />
+ <EditText
+ android:layout_width="match_parent"
+ android:layout_height="wrap_content"
+ android:hint="Second no"
+ android:id="@+id/editText2" />
+ <Button
+ android:layout_width="wrap_content"
+ android:layout_height="wrap_content"
+ android:layout_gravity="center_horizontal"
+ android:text="power"
+ android:id="@+id/button1"
+ />
+ <Button
+ android:layout_width="wrap_content"
+ android:layout_height="wrap_content"
+ android:layout_gravity="center_horizontal"
+ android:text="average"
+By: Shivarkar S.Y. Page 44
+ android:id="@+id/button2"
+ />
+</LinearLayout>
+//MainActivity.java
+package com.example.slip18_2;
+import androidx.appcompat.app.AppCompatActivity;
+import android.content.Intent;
+import android.os.Bundle;
+import android.view.View;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.TextView;
+public class MainActivity extends AppCompatActivity {
+ TextView txt1,txt2;
+ EditText edt1,edt2;
+ Button btn1, btn2;
+ int num1,num2;
+ @Override
+ protected void onCreate(Bundle savedInstanceState) {
+ super.onCreate(savedInstanceState);
+ setContentView(R.layout.activity_main);
+ txt1 = (TextView) findViewById(R.id.textView1);
+ txt2 = (TextView) findViewById(R.id.textView2);
+ edt1 = (EditText) findViewById(R.id.editText1);
+ edt2 = (EditText) findViewById(R.id.editText2);
+ btn2 = (Button) findViewById(R.id.button2);
+ btn1 = (Button) findViewById(R.id.button1);
+ btn1.setOnClickListener(new View.OnClickListener(){
+ @Override
+ public void onClick(View v) {
+ Intent intent1 = new 
+Intent(MainActivity.this,SecondActivity.class);
+ int ans=1;
+ num1 = 
+Integer.parseInt(txt1.getText().toString());
+By: Shivarkar S.Y. Page 45
+ num2 = 
+Integer.parseInt(txt2.getText().toString());
+ for(int i=1;i<num1;i++)
+ ans=ans*num2;
+ 
+//intent1.putExtra("ans",edt2.getText().toString());
+ startActivity(intent1);
+ // startActivityForResult(intent1,1);
+ }
+ });
+ btn2.setOnClickListener(new View.OnClickListener(){
+ @Override
+ public void onClick(View v) {
+ Intent intent1 = new 
+Intent(MainActivity.this,SecondActivity.class);
+ int avg;
+ num1 = 
+Integer.parseInt(txt1.getText().toString());
+ num2 = 
+Integer.parseInt(txt2.getText().toString());
+ avg=num1+num2/2;
+ 
+intent1.putExtra("ans",edt2.getText().toString());
+ 
+intent1.putExtra("ang",edt2.getText().toString());
+ startActivity(intent1);
+ // startActivityForResult(intent1,1);
+ }
+ });
+ }
+}
+//scond_activity.xml
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout 
+xmlns:android="http://schemas.android.com/apk/res/android"
+ xmlns:tools="http://schemas.android.com/tools"
+ android:orientation="vertical"
+By: Shivarkar S.Y. Page 46
+ android:layout_width="match_parent"
+ android:layout_height="match_parent"
+ tools:context=".SecondActivity">
+ <TextView
+ android:layout_width="wrap_content"
+ android:layout_height="wrap_content"
+ android:text="Second Screen"
+ android:textSize="30dp"
+ android:textStyle="bold"
+ android:layout_gravity="center_horizontal"
+ android:id="@+id/textView1" />
+ <TextView
+ android:layout_width="wrap_content"
+ android:layout_height="wrap_content"
+ android:text=""
+ android:textSize="22dp"
+ android:id="@+id/textView2"/>
+</LinearLayout>
+//SecondActivity.java
+package com.example.slip18_2;
+import android.content.Intent;
+import android.os.Bundle;
+import android.widget.TextView;
+import androidx.appcompat.app.AppCompatActivity;
+public class SecondActivity extends AppCompatActivity {
+ TextView txt1,txt2;
+ int n1,n2;
+ @Override
+ protected void onCreate(Bundle savedInstanceState) {
+ super.onCreate(savedInstanceState);
+ setContentView(R.layout.second_activity);
+ txt1=(TextView) findViewById(R.id.textView1);
+ txt2 = (TextView) findViewById(R.id.textView2);
+ Intent intent2 = getIntent();
+ Bundle bundle = intent2.getExtras();
+ int n1 = bundle.getInt("ans");
+ int n2 = bundle.getInt("ang");
+ txt2.setText(n1);
+ txt2.setText(n2);
+By: Shivarkar S.Y. Page 47
+ }
+}
+Slip11_1
+Create an application that will change 
+color of screen and change the font size of 
+text view using xml
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout 
+xmlns:android="http://schemas.android.com/apk/res/android"
+ xmlns:app="http://schemas.android.com/apk/res-auto"
+ xmlns:tools="http://schemas.android.com/tools"
+ android:layout_width="match_parent"
+ android:layout_height="match_parent"
+ tools:context=".MainActivity"
+ android:background="@color/colorAccent">
+ <TextView
+ android:layout_width="wrap_content"
+ android:layout_height="wrap_content"
+By: Shivarkar S.Y. Page 48
+ android:text="Hello TYBCA!"
+ android:fontFamily="cursive"
+ android:textSize="70dp"
+ app:layout_constraintBottom_toBottomOf="parent"
+ app:layout_constraintLeft_toLeftOf="parent"
+ app:layout_constraintRight_toRightOf="parent"
+ app:layout_constraintTop_toTopOf="parent" />
+</androidx.constraintlayout.widget.ConstraintLayout>
+Slip8_2// Send EMail
+//Activity_main.xml
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout 
+xmlns:android="http://schemas.android.com
+/apk/res/android"
+ 
+xmlns:app="http://schemas.android.com/apk
+/res-auto"
+ 
+xmlns:tools="http://schemas.android.com/t
+ools"
+ 
+android:layout_width="match_parent"
+ 
+android:layout_height="match_parent"
+ tools:context=".MainActivity" >
+By: Shivarkar S.Y. Page 49
+<EditText
+ android:id="@+id/editText1"
+ 
+android:layout_width="wrap_content"
+ 
+android:layout_height="wrap_content"
+ 
+android:layout_alignParentRight="true"
+ 
+android:layout_alignParentTop="true"
+ 
+android:layout_marginRight="22dp"
+ 
+android:layout_marginTop="16dp"
+ android:ems="10" >
+</EditText>
+ <EditText
+ android:id="@+id/editText2"
+ 
+android:layout_width="wrap_content"
+ 
+android:layout_height="wrap_content"
+ 
+android:layout_alignLeft="@+id/editText1"
+ 
+android:layout_below="@+id/editText1"
+ android:layout_marginTop="18dp"
+ android:ems="10" >
+By: Shivarkar S.Y. Page 50
+ <requestFocus />
+ </EditText>
+ <EditText
+ android:id="@+id/editText3"
+ 
+android:layout_width="wrap_content"
+ 
+android:layout_height="wrap_content"
+ 
+android:layout_alignLeft="@+id/editText2"
+ 
+android:layout_below="@+id/editText2"
+ 
+android:layout_marginTop="28dp"
+ android:ems="10"
+ 
+android:inputType="textMultiLine" />
+ <TextView
+ android:id="@+id/textView1"
+ 
+android:layout_width="wrap_content"
+ 
+android:layout_height="wrap_content"
+ 
+android:layout_alignBaseline="@+id/editTe
+xt1"
+ 
+android:layout_alignBottom="@+id/editText
+By: Shivarkar S.Y. Page 51
+1"
+ 
+android:layout_alignParentLeft="true"
+ android:text="To:" />
+ <TextView
+ android:id="@+id/textView2"
+ 
+android:layout_width="wrap_content"
+ 
+android:layout_height="wrap_content"
+ 
+android:layout_alignBaseline="@+id/editTe
+xt2"
+ 
+android:layout_alignBottom="@+id/editText
+2"
+ 
+android:layout_alignParentLeft="true"
+ android:text="Subject:" />
+ <TextView
+ android:id="@+id/textView3"
+ 
+android:layout_width="wrap_content"
+ 
+android:layout_height="wrap_content"
+ 
+android:layout_alignBaseline="@+id/editTe
+xt3"
+By: Shivarkar S.Y. Page 52
+ 
+android:layout_alignBottom="@+id/editText
+3"
+ 
+android:layout_alignParentLeft="true"
+ android:text="Message:" />
+ <Button
+ android:id="@+id/button1"
+ 
+android:layout_width="wrap_content"
+ 
+android:layout_height="wrap_content"
+ 
+android:layout_alignLeft="@+id/editText3"
+ 
+android:layout_below="@+id/editText3"
+ 
+android:layout_marginLeft="76dp"
+ 
+android:layout_marginTop="20dp"
+ android:text="Send" />
+ </RelativeLayout>
+//MainActivity.java
+By: Shivarkar S.Y. Page 53
+package com.example.sendsms;
+import 
+androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
+import 
+androidx.core.content.ContextCompat;
+import android.os.Bundle;
+import android.app.Activity;
+import android.content.Intent;
+import android.view.Menu;
+import android.view.View;
+import android.view.View.OnClickListener;
+import android.widget.Button;
+import android.widget.EditText;
+public class MainActivity extends 
+AppCompatActivity {
+ EditText editTextTo, editTextSubject, 
+editTextMessage;
+ Button send;
+ @Override
+ protected void onCreate(Bundle 
+savedInstanceState) {
+ 
+super.onCreate(savedInstanceState);
+By: Shivarkar S.Y. Page 54
+ 
+setContentView(R.layout.activity_main);
+ editTextTo = (EditText) 
+findViewById(R.id.editText1);
+ editTextSubject = (EditText) 
+findViewById(R.id.editText2);
+ editTextMessage = (EditText) 
+findViewById(R.id.editText3);
+ send = (Button) 
+findViewById(R.id.button1);
+ send.setOnClickListener(new 
+OnClickListener() {
+ @Override
+ public void onClick(View 
+arg0) {
+ String to = 
+editTextTo.getText().toString();
+ String subject = 
+editTextSubject.getText().toString();
+ String message = 
+editTextMessage.getText().toString();
+ Intent email = new 
+Intent(Intent.ACTION_SEND);
+ 
+By: Shivarkar S.Y. Page 55
+email.putExtra(Intent.EXTRA_EMAIL, new 
+String[]{to});
+ 
+email.putExtra(Intent.EXTRA_SUBJECT, 
+subject);
+ //need this to prompts 
+email client only
+ 
+email.setType("message/rfc822");
+ 
+startActivity(Intent.createChooser(email, 
+"Choose an Email client :"));
+ }
+ });
+ }
+}
+By: Shivarkar S.Y. Page 56
+package com.example.slipnew18_1;
+import 
+androidx.appcompat.app.AppCompatActivity;
+import android.content.DialogInterface;
+import android.os.Bundle;
+import android.app.Activity;
+import android.app.AlertDialog;
+import android.view.Menu;
+import android.view.View;
+import android.widget.Button;
+import android.widget.Toast;
+By: Shivarkar S.Y. Page 57
+public class MainActivity extends 
+AppCompatActivity {
+ Button closeButton;
+ AlertDialog.Builder builder;
+ @Override
+ protected void onCreate(Bundle 
+savedInstanceState) {
+ 
+super.onCreate(savedInstanceState);
+ 
+setContentView(R.layout.activity_main);
+ closeButton = (Button) 
+findViewById(R.id.button);
+ builder = new 
+AlertDialog.Builder(this);
+ 
+closeButton.setOnClickListener(new 
+View.OnClickListener() {
+ @Override
+ public void onClick(View v) {
+ //Uncomment the below 
+code to Set the message and title from 
+the strings.xml file
+ 
+builder.setMessage(R.string.dialog_messag
+e) .setTitle(R.string.dialog_title);
+ //Setting message 
+manually and performing action on button 
+By: Shivarkar S.Y. Page 58
+click
+ builder.setMessage("Do 
+you want to close this application ?")
+ 
+.setCancelable(false)
+ 
+.setPositiveButton("Yes", new 
+DialogInterface.OnClickListener() {
+ public void 
+onClick(DialogInterface dialog, int id) {
+ finish();
+Toast.makeText(getApplicationContext(),"y
+ou choose yes action for alertbox",
+ 
+Toast.LENGTH_SHORT).show();
+ }
+ })
+.setNegativeButton("No", new 
+DialogInterface.OnClickListener() {
+ public void 
+onClick(DialogInterface dialog, int id) {
+ // 
+Action for 'NO' Button
+dialog.cancel();
+Toast.makeText(getApplicationContext(),"y
+ou choose no action for alertbox",
+By: Shivarkar S.Y. Page 59
+ 
+Toast.LENGTH_SHORT).show();
+ }
+ });
+ //Creating dialog box
+ AlertDialog alert = builder.create();
+ //Setting the title 
+manually
+ 
+alert.setTitle("AlertDialogExample");
+ alert.show();
+ }
+ });
+ }
+}
+//activity_main.xml
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout 
+xmlns:android="http://schemas.android.com
+/apk/res/android"
+ 
+xmlns:app="http://schemas.android.com/apk
+/res-auto"
+ 
+xmlns:tools="http://schemas.android.com/t
+ools"
+ android:layout_width="match_parent"
+ android:layout_height="match_parent"
+By: Shivarkar S.Y. Page 60
+ tools:context=".MainActivity">
+ <Button
+ 
+android:layout_width="wrap_content"
+ 
+android:layout_height="wrap_content"
+ android:id="@+id/button"
+ android:text="Close app"
+ 
+app:layout_constraintBottom_toBottomOf="p
+arent"
+ 
+app:layout_constraintLeft_toLeftOf="paren
+t"
+ 
+app:layout_constraintRight_toRightOf="par
+ent"
+ 
+app:layout_constraintTop_toTopOf="parent" 
+/> </RelativeLayout>
+//string.xml
+<resources>
+ <string 
+name="app_name">SlipNew18_1</string>
+ <string name="dialog_message">Welcome 
+to Alert Dialog</string>
+By: Shivarkar S.Y. Page 61
+ <string 
+name="dialog_title">Javatpoint Alert 
+Dialog</string>
+</resources>
+Slip20_1
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout 
+xmlns:android="http://schemas.android.com
+/apk/res/android"
+ 
+xmlns:app="http://schemas.android.com/apk
+/res-auto"
+ 
+By: Shivarkar S.Y. Page 62
+xmlns:tools="http://schemas.android.com/t
+ools"
+ android:layout_width="match_parent"
+ android:layout_height="match_parent"
+ tools:context=".MainActivity">
+ <LinearLayout
+ 
+android:layout_width="match_parent"
+ 
+android:layout_height="wrap_content"
+ android:orientation="horizontal"
+ android:paddingBottom="40px"
+ android:weightSum="2" >
+ <RadioGroup
+ android:id="@+id/rg1"
+ 
+android:layout_width="wrap_content"
+ 
+android:layout_height="match_parent"
+ android:layout_weight="1"
+ 
+android:orientation="vertical" >
+ <RadioButton
+ 
+android:id="@+id/radioButton1"
+ 
+android:layout_width="wrap_content"
+By: Shivarkar S.Y. Page 63
+ 
+android:layout_height="wrap_content"
+ 
+android:layout_alignParentRight="true"
+ 
+android:layout_alignParentTop="true"
+ 
+android:layout_marginTop="20dp"
+ android:text="Image1" />
+ <RadioButton
+ 
+android:id="@+id/radioButton2"
+ 
+android:layout_width="wrap_content"
+ 
+android:layout_height="wrap_content"
+ 
+android:layout_alignBaseline="@+id/radioB
+utton1"
+ 
+android:layout_alignBottom="@+id/radioBut
+ton1"
+ 
+android:layout_alignParentLeft="true"
+ android:text="Image2" />
+By: Shivarkar S.Y. Page 64
+ <RadioButton
+ 
+android:id="@+id/radioButton3"
+ 
+android:layout_width="wrap_content"
+ 
+android:layout_height="wrap_content"
+ 
+android:layout_marginTop="30dp"
+ android:text="Image3" />
+ </RadioGroup>
+ </LinearLayout>
+ <Button
+ android:id="@+id/button1"
+ 
+android:layout_width="wrap_content"
+ 
+android:layout_height="wrap_content"
+ 
+android:layout_alignParentLeft="true"
+ 
+android:layout_alignParentRight="true"
+ 
+android:layout_centerVertical="true"
+ android:text="Change Image" />
+ <ImageView
+By: Shivarkar S.Y. Page 65
+ android:id="@+id/imageView1"
+ 
+android:layout_width="wrap_content"
+ 
+android:layout_height="wrap_content"
+ 
+android:layout_alignLeft="@+id/button1"
+ 
+android:layout_alignParentBottom="true"
+ 
+android:layout_alignParentRight="true"
+ 
+android:layout_below="@+id/button1"
+ android:layout_marginTop="50dp"
+ 
+android:src="@drawable/ic_launcher_backgr
+ound" />
+</RelativeLayout>
+//Main_activity.java
+package com.example.slipnew20;
+import 
+androidx.appcompat.app.AppCompatActivity;
+import android.os.Bundle;
+import android.view.View;
+import android.widget.Button;
+By: Shivarkar S.Y. Page 66
+import android.widget.ImageView;
+import android.widget.RadioGroup;
+public class MainActivity extends 
+AppCompatActivity implements 
+RadioGroup.OnCheckedChangeListener {
+ RadioGroup group1;
+ Button gen;
+ ImageView img;
+ @Override
+ protected void onCreate(Bundle 
+savedInstanceState) {
+ 
+super.onCreate(savedInstanceState);
+ 
+setContentView(R.layout.activity_main);
+ group1 = (RadioGroup) 
+findViewById(R.id.rg1);
+ 
+group1.setOnCheckedChangeListener((RadioG
+roup.OnCheckedChangeListener) this);
+ // group2 = (RadioGroup) 
+findViewById(R.id.rg2);
+ // 
+group2.setOnCheckedChangeListener((RadioG
+roup.OnCheckedChangeListener) this);
+ img = (ImageView) 
+findViewById(R.id.imageView1);
+By: Shivarkar S.Y. Page 67
+ // oncheckedChanged function
+ gen = (Button) 
+findViewById(R.id.button1);
+ gen.setOnClickListener(new 
+View.OnClickListener() {
+ @Override
+ public void onClick(View v) {
+ // TODO Auto-generated 
+method stub
+ }
+ });
+ }
+ @Override
+ public void 
+onCheckedChanged(RadioGroup group, int 
+checkedId) {
+ // TODO Auto-generated method 
+stub
+ switch (checkedId) {
+ case R.id.radioButton1:
+ 
+img.setImageResource(R.drawable.pic1);
+ break;
+ case R.id.radioButton2:
+ 
+By: Shivarkar S.Y. Page 68
+img.setImageResource(R.drawable.pic2);
+ break;
+ case R.id.radioButton3:
+ 
+img.setImageResource(R.drawable.pic3);
+ break;
+ default:
+ break;
+ }
+ }
+}
+Slip1_2
+By: Shivarkar S.Y. Page 69
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout 
+xmlns:android="http://schemas.android.com
+/apk/res/android"
+ 
+xmlns:app="http://schemas.android.com/apk
+/res-auto"
+ 
+xmlns:tools="http://schemas.android.com/t
+ools"
+ android:layout_width="match_parent"
+ android:layout_height="match_parent"
+ android:orientation="vertical"
+ tools:context=".MainActivity">
+ <ProgressBar
+ android:id="@+id/progressBar2"
+ 
+style="?android:attr/progressBarStyleHori
+zontal"
+ 
+android:layout_width="wrap_content"
+ 
+android:layout_height="wrap_content" />
+</LinearLayout>
+//Main_activity.java
+package com.example.myprogressbar;
+import androidx.appcompat.app.AppCompatActivity;
+By: Shivarkar S.Y. Page 70
+import android.os.Bundle;
+import android.os.Handler;
+import android.view.View;
+import android.widget.ProgressBar;
+public class MainActivity extends AppCompatActivity {
+ static int progrss;
+ ProgressBar pbar;
+ int pstatus = 0;
+ Handler handler = new Handler();
+ @Override
+ protected void onCreate(Bundle savedInstanceState) {
+ super.onCreate(savedInstanceState);
+ setContentView(R.layout.activity_main);
+ progrss = 0;
+ pbar = (ProgressBar) findViewById(R.id.progressBar2);
+ pbar.setMax(200);
+ new Thread(new Runnable() {
+ @Override
+ public void run() {
+ while (pstatus < 100) {
+ pstatus = doSomeWork();
+handler.post(new Runnable() {
+ @Override
+public void run() {
+ pbar.setProgress(pstatus);
+ }
+ });
+ }
+ handler.post(new Runnable() {
+ @Override
+public void run() {
+ pbar.setVisibility(View.GONE);
+ }
+ });
+ }
+ private int doSomeWork() {
+ try {
+ Thread.sleep(500);
+ } catch (InterruptedException e) {
+ e.printStackTrace();
+ }
+ return ++progrss;
+By: Shivarkar S.Y. Page 71
+ }
+ }).start();
+ }
+}
+Slip19_2
+package com.example.smsdemo;
+import 
+androidx.appcompat.app.AppCompatActivity;
+import android.os.Bundle;
+import android.telephony.SmsManager;
+import android.view.View;
+By: Shivarkar S.Y. Page 72
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.Toast;
+public class MainActivity extends 
+AppCompatActivity {
+ private EditText txtMobile;
+ private EditText txtMessage;
+ private Button btnSms;
+ @Override
+ protected void onCreate(Bundle 
+savedInstanceState) {
+ 
+super.onCreate(savedInstanceState);
+ 
+setContentView(R.layout.activity_main);
+ txtMobile = 
+(EditText)findViewById(R.id.mblTxt);
+ txtMessage = 
+(EditText)findViewById(R.id.msgTxt);
+ btnSms = 
+(Button)findViewById(R.id.btnSend);
+ btnSms.setOnClickListener(new 
+View.OnClickListener() {
+ @Override
+ public void onClick(View v) {
+ sendSMS("5556", "hello");
+ }
+ private void sendSMS(String 
+s, String hello) {
+By: Shivarkar S.Y. Page 73
+ try{
+ SmsManager smgr = 
+SmsManager.getDefault();
+ 
+smgr.sendTextMessage(txtMobile.getText().
+toString(),null,txtMessage.getText().toSt
+ring(),null,null);
+ // 
+smgr.sendTextMessage("9860539978",null,tx
+tMessage.getText().toString(),null,null);
+ 
+Toast.makeText(MainActivity.this, "SMS 
+Sent Successfully", 
+Toast.LENGTH_SHORT).show();
+ }
+ catch (Exception e){
+ 
+Toast.makeText(MainActivity.this, "SMS 
+Failed to Send, Please try again", 
+Toast.LENGTH_SHORT).show();
+ }
+ }
+ });
+ }
+}
+//activity_main.xml
+By: Shivarkar S.Y. Page 74
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout 
+xmlns:android="http://schemas.android.com
+/apk/res/android"
+ 
+xmlns:app="http://schemas.android.com/apk
+/res-auto"
+ 
+xmlns:tools="http://schemas.android.com/t
+ools"
+ android:layout_width="match_parent"
+ android:layout_height="match_parent"
+ android:orientation="vertical"
+ tools:context=".MainActivity">
+ <TextView
+ android:id="@+id/fstTxt"
+ 
+android:layout_width="wrap_content"
+ 
+android:layout_height="wrap_content"
+ android:layout_marginLeft="100dp"
+ android:layout_marginTop="150dp"
+ android:text="Mobile No" />
+ <EditText
+ android:id="@+id/mblTxt"
+ 
+android:layout_width="wrap_content"
+ 
+android:layout_height="wrap_content"
+By: Shivarkar S.Y. Page 75
+ android:layout_marginLeft="100dp"
+ android:ems="10"/>
+ <TextView
+ android:id="@+id/secTxt"
+ 
+android:layout_width="wrap_content"
+ 
+android:layout_height="wrap_content"
+ android:text="Message"
+ android:layout_marginLeft="100dp" 
+/>
+ <EditText
+ android:id="@+id/msgTxt"
+ 
+android:layout_width="wrap_content"
+ 
+android:layout_height="wrap_content"
+ android:layout_marginLeft="100dp"
+ android:ems="10" />
+ <Button
+ android:id="@+id/btnSend"
+ 
+android:layout_width="wrap_content"
+ 
+android:layout_height="wrap_content"
+ android:layout_marginLeft="100dp"
+ android:text="Send SMS" />
+</LinearLayout>
+By: Shivarkar S.Y. Page 76
+Slip2_2
+package com.example.slipnew2_2;
+import androidx.appcompat.app.AppCompatActivity;
+import android.media.AudioManager;
+import android.media.MediaPlayer;
+import android.os.Bundle;
+import android.view.View;
+import android.widget.Button;
+import android.widget.Toast;
+import java.io.IOException;
+public class MainActivity extends AppCompatActivity {
+ Button playBtn, pauseBtn;
+ MediaPlayer mediaPlayer;
+ @Override
+ protected void onCreate(Bundle savedInstanceState) {
+ super.onCreate(savedInstanceState);
+ setContentView(R.layout.activity_main);
+By: Shivarkar S.Y. Page 77
+ // initializing our buttons
+ playBtn = findViewById(R.id.idBtnPlay);
+ pauseBtn = findViewById(R.id.idBtnPause);
+ // setting on click listener for our play and pause 
+buttons.
+ playBtn.setOnClickListener(new View.OnClickListener() {
+ @Override
+ public void onClick(View v) {
+ // calling method to play audio.
+ playAudio();
+ }
+ });
+ pauseBtn.setOnClickListener(new View.OnClickListener() {
+ @Override
+ public void onClick(View v) {
+ // checking the media player 
+ // if the audio is playing or not.
+ if (mediaPlayer.isPlaying()) {
+ // pausing the media player if media player 
+// is playing we are calling below line to
+// stop our media player.
+mediaPlayer.stop();
+mediaPlayer.reset();
+mediaPlayer.release();
+ // below line is to display a message 
+// when media player is paused.
+Toast.makeText(MainActivity.this, "Audio has 
+been paused", Toast.LENGTH_SHORT).show();
+ } else {
+ // this method is called when media 
+// player is not playing.
+Toast.makeText(MainActivity.this, "Audio has 
+not played", Toast.LENGTH_SHORT).show();
+ }
+ }
+ });
+ }
+ private void playAudio() {
+ String audioUrl = 
+"https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3";
+By: Shivarkar S.Y. Page 78
+ // initializing media player
+ MediaPlayer mediaPlayer = new MediaPlayer();
+ // below line is use to set the audio 
+ // stream type for our media player.
+ 
+mediaPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
+ // below line is use to set our 
+ // url to our media player.
+ try {
+ mediaPlayer.setDataSource(audioUrl);
+ // below line is use to prepare
+ // and start our media player.
+ mediaPlayer.prepare();
+ mediaPlayer.start();
+ } catch (IOException e) {
+ e.printStackTrace();
+ }
+ // below line is use to display a toast message.
+ Toast.makeText(this, "Audio started playing..", 
+Toast.LENGTH_SHORT).show();
+ }
+}
+//activity_main.xml
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout 
+xmlns:android="http://schemas.android.com/apk/res/android"
+ xmlns:app="http://schemas.android.com/apk/res-auto"
+ xmlns:tools="http://schemas.android.com/tools"
+ android:layout_width="match_parent"
+ android:layout_height="match_parent"
+ tools:context=".MainActivity">
+ <Button
+ android:id="@+id/idBtnPlay"
+ android:layout_width="wrap_content"
+ android:layout_height="wrap_content"
+ android:layout_centerInParent="true"
+ android:text="Play Audio file"
+ android:textAllCaps="false" />
+By: Shivarkar S.Y. Page 79
+ <!--Button for pausing the audio-->
+ <Button
+ android:id="@+id/idBtnPause"
+ android:layout_width="wrap_content"
+ android:layout_height="wrap_content"
+ android:layout_below="@id/idBtnPlay"
+ android:layout_centerInParent="true"
+ android:text="Pause Audio"
+ android:textAllCaps="false" />
+</RelativeLayout>
+//manifest.xml
+<?xml version="1.0" encoding="utf-8"?>
+<manifest 
+xmlns:android="http://schemas.android.com/apk/res/android"
+ package="com.example.slipnew2_2">
+ <uses-permission android:name="android.permission.INTERNET" 
+/>
+ <uses-permission 
+android:name="android.permission.ACCESS_NETWORK_STATE" />
+ <application
+ android:allowBackup="true"
+ android:icon="@mipmap/ic_launcher"
+ android:label="@string/app_name"
+ android:roundIcon="@mipmap/ic_launcher_round"
+ android:supportsRtl="true"
+ android:theme="@style/AppTheme">
+ <activity android:name=".MainActivity">
+ <intent-filter>
+ <action 
+android:name="android.intent.action.MAIN" />
+ <category 
+android:name="android.intent.category.LAUNCHER" />
+ </intent-filter>
+ </activity>
+ </application>
+</manifest>
+By: Shivarkar S.Y. Page 80
+Slip17_1
+Phone Dialer
+//MainActivity.java
+package com.example.intentdemo;
+import androidx.appcompat.app.AppCompatActivity;
+import android.content.Intent;
+import android.net.Uri;
+import android.os.Bundle;
+import android.view.View;
+import android.widget.Button;
+public class MainActivity extends AppCompatActivity {
+Button b1;
+ @Override
+By: Shivarkar S.Y. Page 81
+ protected void onCreate(Bundle savedInstanceState) {
+ super.onCreate(savedInstanceState);
+ setContentView(R.layout.activity_main);
+ b1=(Button)findViewById(R.id.button1);
+ b1.setOnClickListener(new View.OnClickListener() {
+ @Override
+ public void onClick(View v) {
+ Intent i=new Intent(Intent.ACTION_DIAL, 
+Uri.parse("tel:+9860539978"));
+ startActivity(i);
+ }
+ });
+ }
+ @Override
+ public void onBackPressed() {
+ super.onBackPressed();
+ Intent i=new Intent(this,SecondActivity.class);
+ startActivity(i);
+ }
+}
+//activity_main.xml
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout 
+xmlns:android="http://schemas.android.com/apk/res/android"
+ xmlns:app="http://schemas.android.com/apk/res-auto"
+ xmlns:tools="http://schemas.android.com/tools"
+ android:layout_width="match_parent"
+ android:layout_height="match_parent"
+ tools:context=".MainActivity">
+ <TextView
+ android:layout_width="wrap_content"
+ android:layout_height="wrap_content"
+ android:text="Hello World!"
+ app:layout_constraintBottom_toBottomOf="parent"
+ app:layout_constraintLeft_toLeftOf="parent"
+ app:layout_constraintRight_toRightOf="parent"
+ app:layout_constraintTop_toTopOf="parent" />
+ <Button
+By: Shivarkar S.Y. Page 82
+ android:layout_width="match_parent"
+ android:layout_height="wrap_content"
+ android:id="@+id/button1"
+ android:text="Contact"
+ />
+</LinearLayout>
+//SecondActivity.java
+package com.example.intentdemo;
+import androidx.appcompat.app.AppCompatActivity;
+import android.os.Bundle;
+public class SecondActivity extends AppCompatActivity {
+ @Override
+ protected void onCreate(Bundle savedInstanceState) {
+ super.onCreate(savedInstanceState);
+ setContentView(R.layout.activity_second);
+ }
+}
+//activity_second.xml
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout 
+xmlns:android="http://schemas.android.com/apk/res/android"
+ xmlns:app="http://schemas.android.com/apk/res-auto"
+ xmlns:tools="http://schemas.android.com/tools"
+ android:layout_width="match_parent"
+ android:layout_height="match_parent"
+ android:orientation="vertical"
+ tools:context=".SecondActivity">
+ <TextView
+ android:layout_width="wrap_content"
+ android:layout_height="wrap_content"
+ android:id="@+id/text1"
+ android:text="Second Activity">
+By: Shivarkar S.Y. Page 83
+ </TextView>
+ </LinearLayout>
+Slip20_2
+Main_activity.xml
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+ xmlns:android="http://schemas.android.com/apk/res/android"
+ android:layout_width="match_parent"
+ android:layout_height="match_parent"
+ android:orientation="vertical">
+<TextView
+ android:id="@+id/textView"
+ android:layout_width="fill_parent"
+ android:layout_height="wrap_content"
+ android:layout_gravity="center"
+ />
+</LinearLayout>
+//MainActivity.java
+By: Shivarkar S.Y. Page 84
+package com.example.listview;
+import androidx.appcompat.app.AppCompatActivity;
+import android.app.ListActivity;
+import android.os.Bundle;
+import android.view.View;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
+import android.widget.ListView;
+import android.widget.TextView;
+import android.widget.Toast;
+public class MainActivity extends ListActivity
+{
+ // Array of strings...
+ //ListView simpleList;
+ String countryList[] = {"India", "China", 
+"australia", "Portugle", "America", "NewZealand"};
+@Override public void onCreate(Bundle savedInstanceState) {
+ super.onCreate(savedInstanceState);
+ ListView lstview=getListView();
+ lstview.setChoiceMode(ListView.CHOICE_MODE_MULTIPLE);
+ lstview.setTextFilterEnabled(true);
+ setListAdapter(new 
+ArrayAdapter<String>(this,android.R.layout.simple_list_item_1,co
+untryList));
+ }
+ @Override
+ public void onListItemClick(ListView l, View v, int 
+position, long id) {
+ //super.onListItemClick(l, v, position, id);
+ Toast.makeText(this,"you 
+select"+countryList[position],Toast.LENGTH_SHORT).show();
+ }
+}
+By: Shivarkar S.Y. Page 85
+Slip 18_2
+MainActivity.java
+package com.example.notification;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.NotificationCompat;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
+import android.content.Context;
+import android.content.Intent;
+import android.os.Bundle;
+import android.view.View;
+import android.widget.Button;
+public class MainActivity extends AppCompatActivity {
+Button button;
+ @Override
+ protected void onCreate(Bundle savedInstanceState) {
+ super.onCreate(savedInstanceState);
+ setContentView(R.layout.activity_main);
+ button = findViewById(R.id.button);
+ button.setOnClickListener(new View.OnClickListener() {
+ @Override
+ public void onClick(View v) {
+ addNotification();
+ }
+ });
+ }
+ private void addNotification() {
+ NotificationCompat.Builder builder =
+ new NotificationCompat.Builder(this)
+ 
+.setSmallIcon(R.drawable.ic_launcher_background) //set icon for 
+notification
+ .setContentTitle("Notifications 
+Example") //set title of notification
+ .setContentText("This is a notification 
+message")//this is notification message
+ .setAutoCancel(true) // makes auto 
+cancel of notification
+ 
+By: Shivarkar S.Y. Page 86
+.setPriority(NotificationCompat.PRIORITY_DEFAULT); //set 
+priority of notification
+ Intent notificationIntent = new Intent(this, 
+NotificationView.class);
+ 
+notificationIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+ //notification message will get at NotificationView
+ notificationIntent.putExtra("message", "This is a 
+notification message");
+ PendingIntent pendingIntent = 
+PendingIntent.getActivity(this, 0, notificationIntent,
+ PendingIntent.FLAG_UPDATE_CURRENT);
+ builder.setContentIntent(pendingIntent);
+ // Add as notification
+ NotificationManager manager = (NotificationManager) 
+getSystemService(Context.NOTIFICATION_SERVICE);
+ manager.notify(0, builder.build());
+ }
+}
+main.xml
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout 
+xmlns:android="http://schemas.android.com/apk/res/android"
+ xmlns:app="http://schemas.android.com/apk/res-auto"
+ xmlns:tools="http://schemas.android.com/tools"
+ android:layout_width="match_parent"
+ android:layout_height="match_parent"
+ android:orientation="vertical"
+ tools:context=".MainActivity">
+ <TextView
+ android:layout_width="wrap_content"
+ android:layout_height="wrap_content"
+ android:text="ANDROID NOTIFICATION"
+ app:layout_constraintBottom_toBottomOf="parent"
+ app:layout_constraintLeft_toLeftOf="parent"
+ app:layout_constraintRight_toRightOf="parent"
+ app:layout_constraintTop_toTopOf="parent"
+By: Shivarkar S.Y. Page 87
+ app:layout_constraintVertical_bias="0.091"
+ 
+android:textAppearance="@style/Base.TextAppearance.AppCompat.Med
+ium"/>
+ <Button
+ android:layout_width="wrap_content"
+ android:layout_height="wrap_content"
+ android:id="@+id/button"
+ android:layout_marginBottom="112dp"
+ android:layout_marginEnd="8dp"
+ android:layout_marginStart="8dp"
+ android:text="Notify"
+ app:layout_constraintBottom_toBottomOf="parent"
+ app:layout_constraintEnd_toEndOf="parent"
+ app:layout_constraintStart_toStartOf="parent" />
+</LinearLayout>
+Activity_notification_view.xml
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout 
+xmlns:android="http://schemas.android.com/apk/res/android"
+ xmlns:app="http://schemas.android.com/apk/res-auto"
+ xmlns:tools="http://schemas.android.com/tools"
+ android:layout_width="match_parent"
+ android:layout_height="match_parent"
+ android:orientation="vertical"
+ tools:context=".NotificationView">
+ <TextView
+ android:id="@+id/textView2"
+ android:layout_width="fill_parent"
+ android:layout_height="wrap_content"
+ android:gravity="center"
+ android:text="your detail of notification..."
+ 
+android:textAppearance="@style/Base.TextAppearance.AppCompat.Med
+ium" />
+ <TextView
+ android:id="@+id/textView"
+ android:layout_width="wrap_content"
+ android:layout_height="wrap_content"
+ android:layout_marginBottom="8dp"
+By: Shivarkar S.Y. Page 88
+ android:layout_marginEnd="8dp"
+ android:layout_marginStart="8dp"
+ android:layout_marginTop="8dp"
+ app:layout_constraintBottom_toBottomOf="parent"
+ app:layout_constraintEnd_toEndOf="parent"
+ app:layout_constraintHorizontal_bias="0.096"
+ app:layout_constraintStart_toStartOf="parent"
+ app:layout_constraintTop_toBottomOf="@+id/textView2"
+ app:layout_constraintVertical_bias="0.206"
+ 
+android:textAppearance="@style/Base.TextAppearance.AppCompat.Med
+ium"/>
+</LinearLayout>
+//NotificationView.java
+import android.os.Bundle;
+import android.view.View;
+import android.widget.TextView;
+public class NotificationView extends AppCompatActivity {
+ TextView textView;
+ @Override
+ protected void onCreate(Bundle savedInstanceState) {
+ super.onCreate(savedInstanceState);
+ setContentView(R.layout.activity_notification_view);
+ textView = findViewById(R.id.textView);
+ //getting the notification message
+ String message=getIntent().getStringExtra("message");
+ textView.setText(message);
+ }
+}
+By: Shivarkar S.Y. Page 89
+//Google Map Zoom in ,Zoom-out Program
+//MapsActivity.java
+package com.example.mygps;
+import androidx.fragment.app.FragmentActivity;
+import android.os.Bundle;
+import android.view.KeyEvent;
+import com.google.android.gms.maps.CameraUpdateFactory;
+import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.OnMapReadyCallback;
+import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.MarkerOptions;
+By: Shivarkar S.Y. Page 90
+public class MapsActivity<onMapReady> extends 
+FragmentActivity implements OnMapReadyCallback {
+ private GoogleMap mMap;
+ @Override
+ protected void onCreate(Bundle savedInstanceState) 
+{
+ super.onCreate(savedInstanceState);
+ setContentView(R.layout.activity_maps);
+ // Obtain the SupportMapFragment and get 
+notified when the map is ready to be used.
+ SupportMapFragment mapFragment = 
+(SupportMapFragment) getSupportFragmentManager()
+ .findFragmentById(R.id.map);
+ mapFragment.getMapAsync(this);
+ }
+ /**
+ * Manipulates the map once available.
+ * This callback is triggered when the map is ready 
+to be used.
+ * This is where we can add markers or lines, add 
+listeners or move the camera. In this case,
+ * we just add a marker near Sydney, Australia.
+ * If Google Play services is not installed on the 
+device, the user will be prompted to install
+ * it inside the SupportMapFragment. This method 
+will only be triggered once the user has
+ * installed Google Play services and returned to 
+the app.
+ */
+ @Override
+ public void onMapReady(GoogleMap googleMap) {
+ mMap = googleMap;
+By: Shivarkar S.Y. Page 91
+ // Add a marker in Sydney and move the camera
+ LatLng sydney = new LatLng(21, 78);
+ mMap.addMarker(new 
+MarkerOptions().position(sydney).title("Marker in 
+Sydney"));
+ 
+mMap.moveCamera(CameraUpdateFactory.newLatLng(sydney));
+ }
+ @Override
+ public boolean onKeyDown(int keyCode, KeyEvent 
+event) {
+ switch (keyCode)
+ { case 
+KeyEvent.KEYCODE_3:mMap.animateCamera(CameraUpdateFacto
+ry.zoomIn());
+ break;
+ case KeyEvent.KEYCODE_1 
+:mMap.animateCamera(CameraUpdateFactory.zoomOut());
+ break;}
+ return super.onKeyDown(keyCode, event);
+ }
+}
+By: Shivarkar S.Y. Page 92
+// Send EMail
+//Activity_main.xml
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout 
+xmlns:android="http://schemas.android.com
+/apk/res/android"
+ 
+xmlns:app="http://schemas.android.com/apk
+/res-auto"
+ 
+xmlns:tools="http://schemas.android.com/t
+ools"
+ 
+By: Shivarkar S.Y. Page 93
+android:layout_width="match_parent"
+ 
+android:layout_height="match_parent"
+ tools:context=".MainActivity" >
+<EditText
+ android:id="@+id/editText1"
+ 
+android:layout_width="wrap_content"
+ 
+android:layout_height="wrap_content"
+ 
+android:layout_alignParentRight="true"
+ 
+android:layout_alignParentTop="true"
+ 
+android:layout_marginRight="22dp"
+ 
+android:layout_marginTop="16dp"
+ android:ems="10" >
+</EditText>
+ <EditText
+ android:id="@+id/editText2"
+ 
+android:layout_width="wrap_content"
+ 
+android:layout_height="wrap_content"
+By: Shivarkar S.Y. Page 94
+ 
+android:layout_alignLeft="@+id/editText1"
+ 
+android:layout_below="@+id/editText1"
+ android:layout_marginTop="18dp"
+ android:ems="10" >
+ <requestFocus />
+ </EditText>
+ <EditText
+ android:id="@+id/editText3"
+ 
+android:layout_width="wrap_content"
+ 
+android:layout_height="wrap_content"
+ 
+android:layout_alignLeft="@+id/editText2"
+ 
+android:layout_below="@+id/editText2"
+ 
+android:layout_marginTop="28dp"
+ android:ems="10"
+ 
+android:inputType="textMultiLine" />
+ <TextView
+ android:id="@+id/textView1"
+ 
+android:layout_width="wrap_content"
+By: Shivarkar S.Y. Page 95
+ 
+android:layout_height="wrap_content"
+ 
+android:layout_alignBaseline="@+id/editTe
+xt1"
+ 
+android:layout_alignBottom="@+id/editText
+1"
+ 
+android:layout_alignParentLeft="true"
+ android:text="To:" />
+ <TextView
+ android:id="@+id/textView2"
+ 
+android:layout_width="wrap_content"
+ 
+android:layout_height="wrap_content"
+ 
+android:layout_alignBaseline="@+id/editTe
+xt2"
+ 
+android:layout_alignBottom="@+id/editText
+2"
+ 
+android:layout_alignParentLeft="true"
+ android:text="Subject:" />
+ <TextView
+ android:id="@+id/textView3"
+By: Shivarkar S.Y. Page 96
+ 
+android:layout_width="wrap_content"
+ 
+android:layout_height="wrap_content"
+ 
+android:layout_alignBaseline="@+id/editTe
+xt3"
+ 
+android:layout_alignBottom="@+id/editText
+3"
+ 
+android:layout_alignParentLeft="true"
+ android:text="Message:" />
+ <Button
+ android:id="@+id/button1"
+ 
+android:layout_width="wrap_content"
+ 
+android:layout_height="wrap_content"
+ 
+android:layout_alignLeft="@+id/editText3"
+ 
+android:layout_below="@+id/editText3"
+ 
+android:layout_marginLeft="76dp"
+ 
+android:layout_marginTop="20dp"
+ android:text="Send" />
+ </RelativeLayout>
+By: Shivarkar S.Y. Page 97
+//MainActivity.java
+package com.example.sendsms;
+import 
+androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
+import 
+androidx.core.content.ContextCompat;
+import android.os.Bundle;
+import android.app.Activity;
+import android.content.Intent;
+import android.view.Menu;
+import android.view.View;
+import android.view.View.OnClickListener;
+import android.widget.Button;
+import android.widget.EditText;
+public class MainActivity extends 
+AppCompatActivity {
+ EditText editTextTo, editTextSubject, 
+editTextMessage;
+ Button send;
+By: Shivarkar S.Y. Page 98
+ @Override
+ protected void onCreate(Bundle 
+savedInstanceState) {
+ 
+super.onCreate(savedInstanceState);
+ 
+setContentView(R.layout.activity_main);
+ editTextTo = (EditText) 
+findViewById(R.id.editText1);
+ editTextSubject = (EditText) 
+findViewById(R.id.editText2);
+ editTextMessage = (EditText) 
+findViewById(R.id.editText3);
+ send = (Button) 
+findViewById(R.id.button1);
+ send.setOnClickListener(new 
+OnClickListener() {
+ @Override
+ public void onClick(View 
+arg0) {
+ String to = 
+editTextTo.getText().toString();
+ String subject = 
+editTextSubject.getText().toString();
+ String message = 
+By: Shivarkar S.Y. Page 99
+editTextMessage.getText().toString();
+ Intent email = new 
+Intent(Intent.ACTION_SEND);
+ 
+email.putExtra(Intent.EXTRA_EMAIL, new 
+String[]{to});
+ 
+email.putExtra(Intent.EXTRA_SUBJECT, 
+subject);
+ //need this to prompts 
+email client only
+ 
+email.setType("message/rfc822");
+ 
+startActivity(Intent.createChooser(email, 
+"Choose an Email client :"));
+ }
+ });
+ }
+}
+By: Shivarkar S.Y. Page 100
