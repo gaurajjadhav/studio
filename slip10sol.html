@@ -1,0 +1,122 @@
+slip 10 Q1:
+// Java file
+package com.example.slip10;
+import android.os.Bundle;
+import android.widget.CompoundButton;
+import android.widget.Switch;
+import android.widget.Toast;
+import android.widget.ToggleButton;
+import androidx.appcompat.app.AppCompatActivity;
+
+import com.example.slip10.R;
+
+public class MainActivity extends AppCompatActivity {
+    private Switch switchButton;
+    private ToggleButton toggleButton;
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
+        switchButton = findViewById(R.id.switchButton);
+        toggleButton = findViewById(R.id.toggleButton);
+        switchButton.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked)
+            {
+                if (isChecked) {
+                    // Switch is ON
+                    Toast.makeText(MainActivity.this, "Switch is ON",
+                            Toast.LENGTH_SHORT).show();
+                } else {
+                    // Switch is OFF
+                    Toast.makeText(MainActivity.this, "Switch is OFF",
+                            Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
+        toggleButton.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked)
+            {
+                if (isChecked) {
+                    Toast.makeText(MainActivity.this, "ToggleButton is ON", Toast.LENGTH_SHORT).show();
+                } else {
+                    Toast.makeText(MainActivity.this, "ToggleButton is OFF", Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
+    }
+}
+ 
+xml file:
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".MainActivity">
+    <Switch
+        android:id="@+id/switchButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Switch"
+        android:layout_marginTop="50dp"
+        android:layout_centerHorizontal="true"/>
+    <ToggleButton
+        android:id="@+id/toggleButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textOff="Off"
+        android:textOn="On"
+        android:layout_below="@id/switchButton"
+        android:layout_marginTop="20dp"
+        android:layout_centerHorizontal="true"/>
+</RelativeLayout>
+
+
+
+
+
+Q2:
+Java file:
+package com.example.slip10q2;
+
+import android.annotation.SuppressLint;
+import android.os.Bundle;
+import android.widget.ArrayAdapter;
+import android.widget.ListView;
+import androidx.appcompat.app.AppCompatActivity;
+
+public class MainActivity extends AppCompatActivity {
+
+    @SuppressLint("MissingInflatedId")
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
+        ListView listViewFruits = findViewById(R.id.listViewFruits);
+
+        // Array of fruits
+        String[] fruits = {"Apple", "Banana", "Orange", "Mango", "Grapes", "Strawberry", "Pineapple", "Watermelon", "Kiwi", "Peach"};
+
+        // Create an ArrayAdapter
+        ArrayAdapter<String> adapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, fruits);
+
+        // Set the ArrayAdapter on the ListView
+        listViewFruits.setAdapter(adapter);
+    }
+}
+
+Xml file:
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".MainActivity">
+
+    <ListView
+        android:id="@+id/listViewFruits"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"/>
+
+</RelativeLayout>
